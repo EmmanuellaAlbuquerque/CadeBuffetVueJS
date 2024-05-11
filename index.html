@@ -7,7 +7,14 @@
 </head>
 <body>
   <div id="app">
-    
+    <ul>
+      <li v-for="buffet, index in buffets">
+        <div>
+          <strong>{{ buffet.trading_name }}</strong>
+          <address>{{ buffet.city }} - {{ buffet.state }}</address>
+        </div>
+      </li>
+    </ul>    
   </div>
 
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
