@@ -1,3 +1,5 @@
+const api_url = 'http://localhost:3000/api/v1';
+
 const app = Vue.createApp({
   data() {
     return {
@@ -40,24 +42,24 @@ const app = Vue.createApp({
     },
 
     async getBuffets() {
-      let response = await fetch('http://localhost:3000/api/v1/buffets');
+      let response = await fetch(`${api_url}/buffets`);
       this.buffets = await response.json();
     },
 
     async searchBuffets(newQuery) {
-      let response = await fetch(`http://localhost:3000/api/v1/buffets?query=${newQuery}`);
+      let response = await fetch(`${api_url}/buffets?query=${newQuery}`);
       this.filteredBuffets = await response.json();
     },    
 
     async getBuffet(id) {
-      let response = await fetch(`http://localhost:3000/api/v1/buffets/${id}`);
+      let response = await fetch(`${api_url}/buffets/${id}`);
       this.buffet = await response.json(); 
 
       await this.getEvents(this.buffet.id);
     },
 
     async getEvents(buffet_id) {
-      let response = await fetch(`http://localhost:3000/api/v1/buffets/${buffet_id}/events`);
+      let response = await fetch(`${api_url}/buffets/${buffet_id}/events`);
       this.events = await response.json(); 
     },
 
@@ -68,7 +70,7 @@ const app = Vue.createApp({
         return;
       }
 
-      let response = await fetch(`http://localhost:3000/api/v1/events/${event_id}/available?event_date=${this.formData.event_date}&qty_invited=${this.formData.qty_invited}`);
+      let response = await fetch(`${api_url}/events/${event_id}/available?event_date=${this.formData.event_date}&qty_invited=${this.formData.qty_invited}`);
       const found_event = this.events.find(event => event.id === event_id);
       
       found_event.availability_response = await response.json();
