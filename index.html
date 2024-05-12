@@ -3,81 +3,123 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
   <title>Cade Buffet?</title>
 </head>
-<body>
-  <div id="app">
-    <input type="text" v-model="query" placeholder="Pesquise por um buffet">
+<body class="min-w-full min-h-full">
+  <div id="app" class="flex flex-col m-auto w-3/4 mt-8">
+    <h1 class="font-black text-2xl text-center mt-8 mb-8">Cadê <span class="text-violet-500">Buffet?</span></h1>
 
-    <ul>
-      <li v-for="buffet in searchedBuffet">
-        <div>
+    <div id="search-input" class="mb-5 flex items-center">
+      <svg class="absolute text-slate-400 h-5 w-5 ms-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+      </svg>
+      <input type="text" v-model="query" placeholder="Pesquise por um buffet" class="border focus:border-violet-500 p-2 rounded-full ps-12 outline-0 min-w-full">
+    </div>
+
+    <div v-if="searchedBuffet.length <= 0">
+      <p class="text-center mt-5 mb-5 font-semibold text-violet-500">Nenhum buffet encontrado!</p>
+    </div>
+
+    <ul v-if="!buffet" class="grid grid-cols-3 gap-3 mt-5 mb-5">
+      <li v-for="buffet in searchedBuffet" class="p-5 shadow-lg border-t-4 border-violet-500 rounded hover:scale-105 cursor-pointer">
+        <div class="flex flex-col text-center min-h-full">
           <strong>{{ buffet.trading_name }}</strong>
-          <address>{{ buffet.city }} - {{ buffet.state }}</address>
-          <button v-on:click="getBuffet(buffet.id)">Ver Detalhes</button>
+          <address class="mb-2">{{ buffet.city }} - {{ buffet.state }}</address>
+          <button v-on:click="getBuffet(buffet.id)" class="rounded-full bg-violet-500 hover:bg-violet-400 mt-auto text-white font-bold p-2">Ver Detalhes</button>
         </div>
       </li>
     </ul>
     
     <section v-if="buffet">
-      <div id="buffet-data">
-        <p><strong>Nome fantasia:</strong> {{ buffet.trading_name }}</p>
-        <p><strong>Telefone para contato:</strong> {{ buffet.phone }}</p>
-        <p><strong>Email para contato:</strong> {{ buffet.email }}</p>
-        <p><strong>Endereço:</strong> {{ buffet.address }}, {{ buffet.neighborhood }}</p>
-        <p>{{ buffet.city }} - {{ buffet.state }}, {{ buffet.zipcode }}</p>
-        <p><strong>Descrição: </strong> {{ buffet.description }}</p>
-        <strong><p>Formas de pagamento aceitas:</p></strong>
-        <ul>
-          <li v-for="payment_method in buffet.payment_methods">
-            <div>
-              <strong>{{ payment_method.name }}</strong>
-            </div>
-          </li>
-        </ul>
-      </div>
+      <button v-on:click="resetBuffet" class="rounded-full hover:bg-violet-400 bg-violet-500 p-2 w-24 mt-5 mb-5 font-bold text-white">Voltar</button>
+      <div id="buffet-data" class="bg-slate-50 p-8 rounded-t-lg">
+        <h2 class="text-xl text-violet-500 font-bold text-center mt-5 mb-5">{{ buffet.trading_name }}</h2>
 
-      <div id="buffet-events" v-if="events">
-        <div v-for="event in events">
-          <strong><p>{{ event.name }}</p></strong>
-          <p><strong>Descrição:</strong> {{ event.description }}</p>
-          <p><strong>Quantidade mínima de convidados:</strong> {{ event.qty_min }}</p>
-          <p><strong>Quantidade máxima de convidados:</strong> {{ event.qty_max }}</p>
-          <p><strong>Duração:</strong> {{ event.duration }}(min)</p>
-          <p><strong>Cardápio:</strong> {{ event.menu }}</p>
-          <p><strong>Localização Exclusiva:</strong> {{ event.exclusive_location == true ? 'Sim' : 'A escolha do Cliente' }}</p>
-          <strong><p>Serviços Extras:</p></strong>
+        <div class="buffet-data-info lg:w-1/2 m-auto">
+          <p class="mt-5 mb-5"><strong class="block text-slate-700">Telefone para contato:</strong> {{ buffet.phone }}</p>
+          <p class="mt-5 mb-5"><strong class="block text-slate-700">Email para contato:</strong> {{ buffet.email }}</p>
+          <p class="mt-5"><strong class="block text-slate-700">Endereço:</strong> {{ buffet.address }}, {{ buffet.neighborhood }}</p>
+          <p>{{ buffet.city }} - {{ buffet.state }}, {{ buffet.zipcode }}</p>
+          <p class="mt-5 mb-5"><strong class="block text-slate-700">Descrição: </strong> {{ buffet.description }}</p>
+          <strong class="text-slate-700"><p>Formas de pagamento aceitas:</p></strong>
           <ul>
-            <li v-for="service_option in event.service_options">
+            <li v-for="payment_method in buffet.payment_methods">
               <div>
-                <strong>{{ service_option.name }}</strong>
+                <p class="italic">
+                  {{ payment_method.name }}
+                </p>
               </div>
             </li>
           </ul>
+        </div>
+      </div>
 
-          <h3>Consultar disponibilidade para realização do evento</h3>
-          <form>
-            <label for="evento">Data de realização do Evento</label>
-            <input v-model="formData.event_date" type="date" name="event_date" id="event_date" required>
-            <label for="qty_invited">Quantidade estimada de convidados</label>
-            <input v-model="formData.qty_invited" type="number" name="qty_invited" id="qty_invited" placeholder="Número estimado de convidados" required>
-            <button type="submit" v-on:click="checkEventAvailability(event.id)">Consultar</button>
-          </form>
+      <hr>
+
+      <div v-if="events.length <= 0">
+        <p class="text-center mt-5 mb-5 font-semibold text-violet-500">Nenhum evento encontrado!</p>
+      </div>
+
+      <div id="buffet-events" v-if="events" class="divide-y divide-violet-400">
+        <div v-for="event in events" class="p-2 m-5">
+          <h3 class="text-xl font-semibold text-center mt-5 mb-5">
+            {{ event.name }}
+          </h3>
+
+          <div class="event-data-info lg:w-1/2 m-auto">
+            <p class="mt-5 mb-5"><strong class="block text-slate-700">Descrição:</strong> {{ event.description }}</p>
+            <p class="mt-5 mb-5"><strong class="block text-slate-700">Quantidade mínima de convidados:</strong> {{ event.qty_min }}</p>
+            <p class="mt-5 mb-5"><strong class="block text-slate-700">Quantidade máxima de convidados:</strong> {{ event.qty_max }}</p>
+            <p class="mt-5 mb-5"><strong class="block text-slate-700">Duração:</strong> {{ event.duration }} (min)</p>
+            <p class="mt-5 mb-5"><strong class="block text-slate-700">Cardápio:</strong> {{ event.menu }}</p>
+            <p class="mt-5 mb-5"><strong class="block text-slate-700">Localização Exclusiva:</strong> {{ event.exclusive_location == true ? 'Sim' : 'A escolha do Cliente' }}</p>
+            <strong class="text-slate-700"><p>Serviços Extras:</p></strong>
+            <ul>
+              <li v-for="service_option in event.service_options">
+                <div>
+                  <p>{{ service_option.name }}</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <section class="mt-8 mb-5">
+            <h3 class="text-lg mb-3 font-semibold">Consultar disponibilidade para realização do evento</h3>
+            <form class="lg:flex">
+              <div class="me-5">
+                <label for="event_date" class="block text-sm font-medium text-slate-700">Data de realização do Evento</label>
+                <input v-model="formData.event_date" type="date" name="event_date" id="event_date" required 
+                class="border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:border-violet-500 px-3 py-2 w-80">
+              </div>
+              <div class="me-5">
+                <label for="qty_invited" class="block text-sm font-medium text-slate-700">Quantidade estimada de convidados</label>
+                <input v-model="formData.qty_invited" type="number" name="qty_invited" id="qty_invited" placeholder="Número estimado de convidados" required 
+                class="border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:border-violet-500 px-3 py-2 w-80">              
+              </div>
+              <button type="submit" v-on:click="checkEventAvailability(event.id)" class="mt-3 border-solid border-2 border-violet-400 self-end p-2 hover:bg-violet-400 rounded-full text-violet-400 hover:text-white font-medium text-sm">Consultar</button>
+            </form>
+          </section>
           <div v-if="event.availability_response">
+            <p class="text-slate-700 font-bold"><strong>Para o dia {{ event.event_date }} com {{ event.qty_invited }} convidados, temos:</strong></p>
             <div v-if="event.availability_response.status">
-              <p><strong>Preço estimado do Evento:</strong> {{ event.availability_response.total_price }}</p>
+              <p class="italic text-violet-500 font-semibold"><strong>Preço estimado do Evento: R$ {{ event.availability_response.total_price }}</strong></p>
             </div>
             <div v-if="!event.availability_response.status">
-              <p>{{ event.availability_response.msg }}</p>
+              <p class="italic text-violet-500 font-semibold"><strong>{{ event.availability_response.msg }}</strong></p>
             </div>
             <div v-if="event.availability_response.error">
-              <p>{{ event.availability_response.error }}</p>
+              <p class="italic text-violet-500 font-semibold"><strong>{{ event.availability_response.error }}</strong></p>
             </div>
           </div>
         </div>
       </div>
     </section>
   </div>
+
+  <footer class="mt-8 mb-8">
+    <p class="font-semibold text-center">&copy; 2024 Cadê Buffet? Todos os direitos reservados.</p>
+  </footer>
 
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <script src="main.js"></script>
