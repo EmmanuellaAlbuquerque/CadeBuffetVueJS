@@ -2,7 +2,9 @@ const app = Vue.createApp({
   data() {
     return {
       query: '',
-      buffets: []
+      buffets: [],
+      buffet: null,
+      events: []
     }
   },
 
@@ -27,6 +29,18 @@ const app = Vue.createApp({
     async getBuffets() {
       let response = await fetch('http://localhost:3000/api/v1/buffets');
       this.buffets = await response.json();
+    },
+
+    async getBuffet(id) {
+      let response = await fetch(`http://localhost:3000/api/v1/buffets/${id}`);
+      this.buffet = await response.json(); 
+
+      await this.getEvents(this.buffet.id);
+    },
+
+    async getEvents(buffet_id) {
+      let response = await fetch(`http://localhost:3000/api/v1/buffets/${buffet_id}/events`);
+      this.events = await response.json(); 
     }
   }
 });

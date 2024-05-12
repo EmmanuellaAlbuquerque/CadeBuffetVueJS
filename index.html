@@ -10,13 +10,53 @@
     <input type="text" v-model="query" placeholder="Pesquise por um buffet">
 
     <ul>
-      <li v-for="buffet, index in searchedBuffet">
+      <li v-for="buffet in searchedBuffet">
         <div>
           <strong>{{ buffet.trading_name }}</strong>
           <address>{{ buffet.city }} - {{ buffet.state }}</address>
+          <button v-on:click="getBuffet(buffet.id)">Ver Detalhes</button>
         </div>
       </li>
-    </ul>    
+    </ul>
+    
+    <section v-if="buffet">
+      <div id="buffet-data">
+        <p><strong>Nome fantasia:</strong> {{ buffet.trading_name }}</p>
+        <p><strong>Telefone para contato:</strong> {{ buffet.phone }}</p>
+        <p><strong>Email para contato:</strong> {{ buffet.email }}</p>
+        <p><strong>Endereço:</strong> {{ buffet.address }}, {{ buffet.neighborhood }}</p>
+        <p>{{ buffet.city }} - {{ buffet.state }}, {{ buffet.zipcode }}</p>
+        <p><strong>Descrição: </strong> {{ buffet.description }}</p>
+        <strong><p>Formas de pagamento aceitas:</p></strong>
+        <ul>
+          <li v-for="payment_method in buffet.payment_methods">
+            <div>
+              <strong>{{ payment_method.name }}</strong>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div id="buffet-events" v-if="events">
+        <div v-for="event in events">
+          <strong><p>{{ event.name }}</p></strong>
+          <p><strong>Descrição:</strong> {{ event.description }}</p>
+          <p><strong>Quantidade mínima de convidados:</strong> {{ event.qty_min }}</p>
+          <p><strong>Quantidade máxima de convidados:</strong> {{ event.qty_max }}</p>
+          <p><strong>Duração:</strong> {{ event.duration }}(min)</p>
+          <p><strong>Cardápio:</strong> {{ event.menu }}</p>
+          <p><strong>Localização Exclusiva:</strong> {{ event.exclusive_location == true ? 'Sim' : 'A escolha do Cliente' }}</p>
+          <strong><p>Serviços Extras:</p></strong>
+          <ul>
+            <li v-for="service_option in event.service_options">
+              <div>
+                <strong>{{ service_option.name }}</strong>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
   </div>
 
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
