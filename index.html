@@ -54,6 +54,26 @@
               </div>
             </li>
           </ul>
+
+          <h3>Consultar disponibilidade para realização do evento</h3>
+          <form>
+            <label for="evento">Data de realização do Evento</label>
+            <input v-model="formData.event_date" type="date" name="event_date" id="event_date" required>
+            <label for="qty_invited">Quantidade estimada de convidados</label>
+            <input v-model="formData.qty_invited" type="number" name="qty_invited" id="qty_invited" placeholder="Número estimado de convidados" required>
+            <button type="submit" v-on:click="checkEventAvailability(event.id)">Consultar</button>
+          </form>
+          <div v-if="event.availability_response">
+            <div v-if="event.availability_response.status">
+              <p><strong>Preço estimado do Evento:</strong> {{ event.availability_response.total_price }}</p>
+            </div>
+            <div v-if="!event.availability_response.status">
+              <p>{{ event.availability_response.msg }}</p>
+            </div>
+            <div v-if="event.availability_response.error">
+              <p>{{ event.availability_response.error }}</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
