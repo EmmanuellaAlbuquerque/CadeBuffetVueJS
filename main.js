@@ -1,12 +1,26 @@
 const app = Vue.createApp({
   data() {
     return {
+      query: '',
       buffets: []
     }
   },
 
+  computed: {
+    searchedBuffet() {
+      if (this.query) {
+        return this.buffets.filter(buffet => {
+          return buffet.trading_name.toLowerCase().includes(this.query.toLowerCase());
+        });
+      }
+      else {
+        return this.buffets;
+      }
+    }
+  },
+
   async mounted() {
-    await this.getBuffets();
+    this.searchedBuffet = await this.getBuffets();
   },
 
   methods: {

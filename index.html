@@ -7,8 +7,10 @@
 </head>
 <body>
   <div id="app">
+    <input type="text" v-model="query" placeholder="Pesquise por um buffet">
+
     <ul>
-      <li v-for="buffet, index in buffets">
+      <li v-for="buffet, index in searchedBuffet">
         <div>
           <strong>{{ buffet.trading_name }}</strong>
           <address>{{ buffet.city }} - {{ buffet.state }}</address>
