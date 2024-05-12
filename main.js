@@ -8,16 +8,15 @@ const app = Vue.createApp({
       formData: {
         event_date: '',
         qty_invited: ''
-      }
+      },
+      filteredBuffets: []
     }
   },
 
   computed: {
     searchedBuffet() {
       if (this.query) {
-        return this.buffets.filter(buffet => {
-          return buffet.trading_name.toLowerCase().includes(this.query.toLowerCase());
-        });
+        return this.filteredBuffets;
       }
       else {
         return this.buffets;
@@ -26,7 +25,13 @@ const app = Vue.createApp({
   },
 
   async mounted() {
-    this.searchedBuffet = await this.getBuffets();
+    await this.getBuffets();
+  },
+
+  watch: {
+    query(newQuery) {
+      this.searchBuffets(newQuery);
+    }
   },
 
   methods: {
@@ -34,6 +39,11 @@ const app = Vue.createApp({
       let response = await fetch('http://localhost:3000/api/v1/buffets');
       this.buffets = await response.json();
     },
+
+    async searchBuffets(newQuery) {
+      let response = await fetch(`http://localhost:3000/api/v1/buffets?query=${newQuery}`);
+      this.filteredBuffets = await response.json();
+    },    
 
     async getBuffet(id) {
       let response = await fetch(`http://localhost:3000/api/v1/buffets/${id}`);
