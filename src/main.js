@@ -47,7 +47,7 @@ const app = Vue.createApp({
     },
 
     async searchBuffets(newQuery) {
-      let response = await fetch(`${api_url}/buffets?query=${newQuery}`);
+      let response = await fetch(`${api_url}/buffets/search?query=${newQuery}`);
       this.filteredBuffets = await response.json();
     },    
 
